@@ -31,32 +31,33 @@ import React, { useState, useEffect }  from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import axios from "axios";
 function App (){
-    //const [error, setError] = useState(null);
-    //const [isLoaded, setIsLoaded] = useState(false);
-    
-    const url = '/energy/2016/';
+    const [url, seturl] = useState('http://127.0.0.1:8000/energies/2016/');
     const [energies, setenergies] = useState([]);
     useEffect(() => {
       axios.get(url).then(res => {
-        var a=res.data;
-        console.log(a.results)
-        setenergies(res.data.results);
+        setenergies(energies => [...energies, ...res.data.results]);
+        if (res.data.next){
+          seturl(res.data.next)
+        }
       })
-    }, [])
+    }, [url])
     return (
         <div>
-            <MapContainer center={[51.505, -0.09]} zoom={5} scrollWheelZoom={false} style={{ height: '90vh', width: '100%' }}>
+            <MapContainer center={[37.0902, -95.7129]} zoom={4} scrollWheelZoom={false} style={{ height: '90vh', width: '100%' }}>
             <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            
             {energies.map(energy => (
                 <Marker key={`${energy.url}`} position={[energy.plant_information.plant.latitude,energy.plant_information.plant.longitude]}>
                     <Popup>
-                        {energy.plant_information.plant.name}<br/>{energy.plant_information.nameplate_capacity}
+                        name:{energy.plant_information.plant.name}<br/>
+                        capacity:{energy.plant_information.nameplate_capacity}MW
                     </Popup>
                 </Marker>
             ))}
+            
             </MapContainer>
         </div>
     );
