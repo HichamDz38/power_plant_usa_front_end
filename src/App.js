@@ -1,88 +1,122 @@
-/*
-import React  from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
-*/
-
 import React, { useState, useEffect }  from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+//import { MapContainer, TileLayer } from 'react-leaflet';
 import axios from "axios";
+import L from 'leaflet';
+import {CRS} from 'leaflet';
+var cities_map = {
+  ""  : "All_cities",
+  "AL": "Alabama",
+  "AK": "Alaska",
+  "AS": "American Samoa",
+  "AZ": "Arizona",
+  "AR": "Arkansas",
+  "CA": "California",
+  "CO": "Colorado",
+  "CT": "Connecticut",
+  "DE": "Delaware",
+  "DC": "District Of Columbia",
+  "FM": "Federated States Of Micronesia",
+  "FL": "Florida",
+  "GA": "Georgia",
+  "GU": "Guam",
+  "HI": "Hawaii",
+  "ID": "Idaho",
+  "IL": "Illinois",
+  "IN": "Indiana",
+  "IA": "Iowa",
+  "KS": "Kansas",
+  "KY": "Kentucky",
+  "LA": "Louisiana",
+  "ME": "Maine",
+  "MH": "Marshall Islands",
+  "MD": "Maryland",
+  "MA": "Massachusetts",
+  "MI": "Michigan",
+  "MN": "Minnesota",
+  "MS": "Mississippi",
+  "MO": "Missouri",
+  "MT": "Montana",
+  "NE": "Nebraska",
+  "NV": "Nevada",
+  "NH": "New Hampshire",
+  "NJ": "New Jersey",
+  "NM": "New Mexico",
+  "NY": "New York",
+  "NC": "North Carolina",
+  "ND": "North Dakota",
+  "MP": "Northern Mariana Islands",
+  "OH": "Ohio",
+  "OK": "Oklahoma",
+  "OR": "Oregon",
+  "PW": "Palau",
+  "PA": "Pennsylvania",
+  "PR": "Puerto Rico",
+  "RI": "Rhode Island",
+  "SC": "South Carolina",
+  "SD": "South Dakota",
+  "TN": "Tennessee",
+  "TX": "Texas",
+  "UT": "Utah",
+  "VT": "Vermont",
+  "VI": "Virgin Islands",
+  "VA": "Virginia",
+  "WA": "Washington",
+  "WV": "West Virginia",
+  "WI": "Wisconsin",
+  "WY": "Wyoming"
+}
+const queryParams = new URLSearchParams(window.location.search);
+  const city = queryParams.get('city');
+  const year = queryParams.get('year');
+  var f_url = "";
+  if(city && year){
+    f_url = `http://127.0.0.1:8000/energies/${year}/${city}/`;
+  }else{
+    f_url = 'http://127.0.0.1:8000/energies/2016/';
+  }
+
+var map = L.map('map').setView([50.8, -90], 4,  false);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    crs: CRS.Simple,
+}).addTo(map);
+var cities_array = Object.keys(cities_map);
+
 function App (){
-    const [url, seturl] = useState('http://127.0.0.1:8000/energies/2016/');
-    const [energies, setenergies] = useState([]);
+    const [url, seturl] = useState(f_url);
+    //const [energies, setenergies] = useState([]);
     useEffect(() => {
       axios.get(url).then(res => {
-        setenergies(energies => [...energies, ...res.data.results]);
-        if (res.data.next){
+        var Data = res.data.results;
+        if(res.data.next){
           seturl(res.data.next)
+          //seturl(url)
         }
+        //console.log(Data)
+        Data.map(d =>(
+          L.circle([d.plant_information.plant.latitude, d.plant_information.plant.longitude],{
+            //color: 'red',
+            //fillColor: '#f03',
+            //  fillOpacity: 0.3,
+            radius: (d.generator_anual_net==null || isNaN(Math.log10(d.generator_anual_net)))?0:Math.log10(d.generator_anual_net)*5000
+          })
+          .bindPopup(`name:${d.plant_information.plant.name}<br/>capacity:${d.plant_information.nameplate_capacity}MW`)
+          .openPopup()
+          .addTo(map)
+          
+        ))
+        //console.log(url)
       })
     }, [url])
     return (
         <div>
-            <MapContainer center={[37.0902, -95.7129]} zoom={4} scrollWheelZoom={false} style={{ height: '90vh', width: '100%' }}>
-            <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            
-            {energies.map(energy => (
-                <Marker key={`${energy.url}`} position={[energy.plant_information.plant.latitude,energy.plant_information.plant.longitude]}>
-                    <Popup>
-                        name:{energy.plant_information.plant.name}<br/>
-                        capacity:{energy.plant_information.nameplate_capacity}MW
-                    </Popup>
-                </Marker>
-            ))}
-            
-            </MapContainer>
+            <select>
+          {cities_array.map(city =>(
+            <option value={city}>{cities_map[city]}</option>
+          ))}
+        </select>
         </div>
+        
     );
 }
 export default App;
-
-/*
-import React,{useEffect, useState} from "react";
-import axios from "axios";
-const RestExample = () => {
-  const url = 'https://webhooks.mongodb-stitch.com/api/client/v2.0/app/covid-19-qppza/service/REST-API/incoming_webhook/metadata';
-  const [countries, setCountries] = useState([]);
-  useEffect(() => {
-    axios.get(url).then(res => {
-      setCountries(res.data.countries);
-    })
-  }, [])
-  return <div className="App">
-    <h1>List of Countries</h1>
-    <div>
-      <ul>
-        {countries.map(c => <li key={c}>{c}</li>)}
-      </ul>
-    </div>
-  </div>
-};
-export default RestExample;
-*/
