@@ -74,17 +74,17 @@ const queryParams = new URLSearchParams(window.location.search);
   var center = [50.8, -90];
   var zoom =4;
   if(city && year && limit){
-    f_url = `http://127.0.0.1:8000/energies/${year}/${city}/${limit}/`;
+    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/${city}/${limit}/`;
     center = states[cities_map[city]]
     zoom = 6;
   }else if(city && year){
-    f_url = `http://127.0.0.1:8000/energies/${year}/${city}/`;
+    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/${city}/`;
     center = states[cities_map[city]]
     zoom = 6;
   }else if (year && limit){
-    f_url = `http://127.0.0.1:8000/energies/${year}/${limit}`;
+    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/${limit}`;
   }else if (year){
-    f_url = `http://127.0.0.1:8000/energies/${year}/`;
+    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/`;
   }
 
 var map = L.map('map').setView(center, zoom,  false);
