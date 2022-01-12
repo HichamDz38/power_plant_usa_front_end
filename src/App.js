@@ -110,10 +110,16 @@ function App (){
             //color: 'red',
             //fillColor: '#f03',
             //  fillOpacity: 0.3,
-            radius: (d.generator_anual_net==null || isNaN(Math.log10(d.generator_anual_net)))?0:Math.log10(d.generator_anual_net)*5000
+            radius: (d.generator_anual_net==null || isNaN(Math.log10(d.generator_anual_net)))?0:Math.log10(d.generator_anual_net)*3000
           })
-          .bindPopup(`name:${d.plant_information.plant.name}<br/>capacity:${d.plant_information.nameplate_capacity}MW`)
-          .openPopup()
+          .bindPopup(`name:${d.plant_information.plant.name}<br/>
+          state :${d.plant_information.plant.state}<br/>
+          primary fluel :${d.plant_information.primary_fluel}<br/>
+          num generators :${d.plant_information.num_generator}<br/>
+          num boilers :${d.plant_information.num_boilers}<br/>
+          capacity :${d.plant_information.nameplate_capacity}MW<br/>
+          anual_net :${d.generator_anual_net}MWh<br/>
+          `)
           .addTo(map)
           
         ))
