@@ -70,21 +70,21 @@ const queryParams = new URLSearchParams(window.location.search);
   const city = queryParams.get('city');
   const year = queryParams.get('year');
   const limit = queryParams.get('limit');
-  var f_url = "http://127.0.0.1:8000";
+  var f_url = "https://powerplantusasqlite.herokuapp.com/";
   var center = [50.8, -90];
   var zoom =4;
   if(city && year && limit){
-    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/${city}/${limit}/`;
+    f_url = `https://powerplantusasqlite.herokuapp.com/energies/${year}/${city}/${limit}/`;
     center = states[cities_map[city]]
     zoom = 6;
   }else if(city && year){
-    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/${city}/`;
+    f_url = `https://powerplantusasqlite.herokuapp.com/energies/${year}/${city}/`;
     center = states[cities_map[city]]
     zoom = 6;
   }else if (year && limit){
-    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/${limit}`;
+    f_url = `https://powerplantusasqlite.herokuapp.com/energies/${year}/${limit}`;
   }else if (year){
-    f_url = `https://arcane-journey-78283.herokuapp.com/energies/${year}/`;
+    f_url = `https://powerplantusasqlite.herokuapp.com/energies/${year}/`;
   }
 
 var map = L.map('map').setView(center, zoom,  false);
