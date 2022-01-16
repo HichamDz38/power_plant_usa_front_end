@@ -131,7 +131,7 @@ function App (){
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.3,
-            radius: (d.generator_anual_net==null || isNaN(Math.log10(d.generator_anual_net)))?0:Math.log10(d.generator_anual_net)*3000
+            radius: (d.generator_anual_net==null || isNaN(Math.log10(d.generator_anual_net)))?0:Math.log10(d.generator_anual_net)<1?1:Math.log10(d.generator_anual_net)*3000
           })
           .bindPopup(`name:${d.plant_information.plant.name}<br/>
           state :${d.plant_information.plant.state}<br/>
